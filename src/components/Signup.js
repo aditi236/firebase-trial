@@ -2,6 +2,9 @@ import React, { useState, useRef } from 'react'
 import { Form, Button, Card, Alert } from 'react-bootstrap'
 import { useAuth } from '../context/AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
+import { useCollection } from '../hooks/useCollection'
+import { db } from '../firebase'
+import { collection, addDoc } from 'firebase/firestore'
 
 export default function Signup() {
     const emailRef = useRef()
@@ -14,8 +17,17 @@ export default function Signup() {
     const [loading, setLoading] = useState(false)
     const nav = useNavigate()
 
+
     async function handleSubmit(e) {
+
         e.preventDefault()
+
+        const ref = collection(db, 'users')
+        await addDoc(ref, {
+            firstName: firstNameRef.current.value,
+            lastName: lastNameRef.current.value,
+            email: emailRef.current.value
+        })
 
         if (passwordRef.current.value !== passwordConfirmRef.current.value) {
             return setError('Passwords do not match')
@@ -25,8 +37,10 @@ export default function Signup() {
             setError('')
             setLoading(true)
             await signup(emailRef.current.value, passwordRef.current.value)
+
             nav("/")
-        } catch {
+        } catch (e) {
+            console.error('Failed to create an account', e)
             setError('Failed to create an account')
         }
 
@@ -37,7 +51,7 @@ export default function Signup() {
         <>
             <Card>
                 <Card.Body>
-                    <h2 classname="text-center mb-4">Sign Up</h2>
+                    <h2 className="text-center mb-4">Sign Up</h2>
 
                     {error && <Alert variant="danger">{error}</Alert>}
                     <Form onSubmit={handleSubmit}>
