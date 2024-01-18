@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react'
 import { Form, Button, Card, Alert } from 'react-bootstrap'
 import { useAuth } from '../context/AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
-import { useCollection } from '../hooks/useCollection'
 import { db } from '../firebase'
 import { collection, addDoc } from 'firebase/firestore'
 
